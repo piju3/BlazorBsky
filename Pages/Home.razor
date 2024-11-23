@@ -1,0 +1,36 @@
+﻿@page "/"
+@using System.Runtime.InteropServices.JavaScript
+@using Microsoft.AspNetCore.Components.Web
+@using BlazorBsky.Data
+<PageTitle>Home</PageTitle>
+<div id="main" style="width: 1100px; margin:auto">
+    <h1 class="">Hello, world!</h1>
+    Welcome to X: the everything app™ (except it's a terrible Bluesky client). Be warned CSS/web design is not currently part of the experience.
+    <!--<form @onsubmit="Submit" style="height: 100%;">
+        <label>ATUrl or handle</label><input type="text" @bind="form1text" style="width:60%"></input> <input type="submit" />
+    </form>
+    -->
+    <div><a href="/post/at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l6oveex3ii2l">View post</a></div>
+    <div><a href="/profile/bsky.app">View profile</a></div>
+    <!--PostTimeline Posts=@(...) /-->
+</div>
+@code{
+    string form1text = "";
+    Task Submit()
+    {
+        //if(){}
+        return Task.CompletedTask;
+    }
+
+    /*To Do list:
+    * - Git
+    * - FishyFlip PR
+    *   - Switch to dev
+    * - Fix navigation
+    * - Fix home page somehow
+    * - Support images
+    * - Clean up details
+    * - Host on GitHub pages
+    * - OAuth...
+    */
+}

@@ -1,0 +1,40 @@
+<form id="the-form" @onsubmit="Submit" style="height: 100%;">
+            By: <input type="text" @bind="Form_by" />
+            <!--Bind oninput because ctrl+enter does not trigger onchanged so we don't get the text updated
+                A better solution would be javascript to submit the form.
+            -->
+    <div style="display: flex; align-items: stretch;">
+        <textarea @bind="Form_text" @bind:event="oninput" style="width:60%" @onkeypress="Handler"></textarea>
+        <input class="btn btn-primary" type="submit" value="Poast" />        
+    </div>
+</form>
+
+@code{
+    string Form_text = "";
+    string Form_by = "";
+
+    private Task Handler(KeyboardEventArgs keyEvent)
+    {
+        //Ctrl+Enter
+        //Warning: not a true form submit
+        if (keyEvent.CtrlKey && keyEvent.Key == "\n") return Submit();
+        else return Task.CompletedTask;
+    }
+    Task Submit()
+    {
+        /*var p = NewPost.InvokeAsync(new Post
+            {
+                Content = Form_text,
+                Username = Form_by,
+                PostDate = DateTime.Now,
+                InReplyTo = IsReplyTo?.Id
+            });*/
+        Form_text = "";
+        return Task.CompletedTask;
+    }
+    [Parameter]
+    public EventCallback<Post> NewPost { get; set; }
+
+    [Parameter]
+    public PostView? IsReplyTo { get; set; }
+}

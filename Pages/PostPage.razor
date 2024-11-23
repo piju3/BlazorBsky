@@ -1,0 +1,90 @@
+﻿@page "/post/{AtUri}"
+@using BlazorBsky.Data
+@using FishyFlip.Models
+@using System.Text
+@inject NavigationManager Navigation
+<h3>Post</h3>
+@if (Post == null)
+{
+    <p>@msg</p>
+}
+else
+{
+    <BlazorBsky.Shared.PostComponent Value="@Post"/>
+    <hr />
+    <div style="margin-left:1em">
+        @if (Replies!.Count == 0)
+        {
+            <text>No replies</text>
+        }
+        else
+        {
+            <PostTimeline Posts="Replies"></PostTimeline>
+        }
+    </div>
+}
+@code{
+    //https://bsky.app/profile/bsky.app/post/3l3jewuiszf2l  -> at://bsky.app/app.bsky.feed.post/3l3jewuiszf2l -> at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l3jewuiszf2l
+
+    [Parameter]
+    public string? AtUri { get; set; }
+
+    PostView? Post;
+    List<IEnumerable<PostView>>? Replies;
+
+    string? msg;
+
+    protected override async Task OnParametersSetAsync() {
+        if (AtUri == null) {
+            msg = "No URL";
+            return;
+        }
+        try
+        {
+            msg = "Loading...";
+            //var uri = AtUri ?? "at://bsky.app/app.bsky.feed.post/3lb3qyu64bs2z";
+
+            var data = await AppData.Client.Feed.GetPostThreadAsync(new ATUri(AtUri));
+            if (!data.IsT0) {
+                if (data.IsT1) msg = "Error: " + data.AsT1.Detail?.Message;
+                return;
+            }
+            Post = data.AsT0.Thread.Post!;
+            Replies = Flatten(data.AsT0.Thread);
+        } catch (Exception e)
+        {
+            //Logger.Error
+            msg = "Exception: " + e.ToString();
+        }
+    }
+
+
+    static List<IEnumerable<PostView>> Flatten(ThreadView thread)
+    {
+        var L1Replies = thread.Replies?.OrderBy(r => r.Post!.LikeCount).AsEnumerable() ?? [];
+
+        return L1Replies.Select(
+            L1Reply =>
+            IterateBy(L1Reply, t => t.Replies?.MaxBy(r => r.Post!.LikeCount))
+            .Select(t => t.Post!)
+        ).ToList();
+    }
+
+    static IEnumerable<T> IterateBy<T>(T First, Func<T, T?> Next)
+    {
+        T? current = First;
+        while (current != null)
+        {
+            yield return current;
+            current = Next(current);
+        }
+    }
+    
+    /*
+    void HandleDelete()
+    {
+        //AppData.DeletePost(post!);
+        Navigation.NavigateTo("/");
+    }
+    */
+}

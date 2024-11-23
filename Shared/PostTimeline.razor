@@ -1,0 +1,19 @@
+﻿<!-- PostTimeline -->
+@foreach (var postSet in Posts)
+{
+    int indent = 0;
+    foreach (var post in postSet){
+        <BlazorBsky.Shared.PostComponent Value=post Indent="@indent" @key=post />
+        if (indent == 0) indent++;
+    }
+    <!--<hr/>-->
+}
+@code {
+    [Parameter]
+    public required List<IEnumerable<PostView>> Posts { get; set; }
+
+    //[Parameter]
+    //public EventCallback<Post> OnDelete { get; set; }
+    //[Parameter]
+    //public EventCallback<Post> OnReply { get; set; }
+}

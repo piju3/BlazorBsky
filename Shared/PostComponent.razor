@@ -1,0 +1,38 @@
+﻿<RadzenCard style="@(Indent>0?"margin-left: "+Indent+"em" : null)">
+    <!--class="rz-my-12 rz-mx-auto" Style="min-height:10em"-->
+    <a href="/Profile/@Value.Author.Handle">@Value.Author.Handle (@Value.IndexedAt):</a> <a href="/post/@Uri.EscapeDataString(Value.Uri.Href)"><RadzenIcon Icon="link" /></a>
+    <div style="/*min-height:3em*/">@(Value.Record!.Text)</div>
+    <div style="display:flex" class="post-controls">
+        @*if(!ConfirmDelete){
+            <RadzenButton style="margin-right:5px" Icon="delete" Click="()=> ConfirmDelete = true">Delete</RadzenButton>
+        }
+        else
+        {
+            <RadzenButton style="margin-right:5px" ButtonStyle="ButtonStyle.Danger" Icon="delete" Click="Delete">Are you sure?</RadzenButton>
+        }*@
+        <RadzenButton style="margin-right:5px" Icon="reply" Click="()=>ShowReplyForm = !ShowReplyForm" />
+        <span>❤️@Value.LikeCount ↩️@Value.ReplyCount ↪️@Value.RepostCount</span>
+    </div>
+    @if(ShowReplyForm)
+    {
+        <PostForm IsReplyTo="@Value"/>
+    }
+</RadzenCard>
+@code {
+    bool ShowReplyForm = false;
+    bool ConfirmDelete { get; set; } = false;
+
+    [Parameter]
+    public int Indent { get; set; }
+
+    [Parameter]
+    public required PostView Value { get; set; }
+    /*
+    [Parameter]
+    public EventCallback<Post> OnDelete { get; set; }
+    [Parameter]
+    public EventCallback<Post> OnReply { get; set; }
+    [Parameter]
+    public bool ShowReplyButton { get; set; }
+    */
+}

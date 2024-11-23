@@ -1,0 +1,107 @@
+﻿@page "/profile/{userid}"
+@using BlazorBsky.Data
+@using FishyFlip.Models
+@using System.Text
+
+@if (Posts == null || UserProfile == null)
+{
+    <p>@msg</p>
+}
+else
+{
+
+    <h2>Profile</h2>
+    <img src="@UserProfile!.Banner" style="max-height:200px;margin-left:auto;margin-right:auto" />
+    <RadzenCard>
+        <img src="@UserProfile!.Avatar" width="50" />
+        <div>@UserProfile.DisplayName</div>
+        <div>@UserProfile.Description</div>
+        <span>@UserProfile.FollowersCount Followers, @UserProfile.FollowsCount Follows, @UserProfile.PostsCount Posts</span>
+    </RadzenCard>
+    <h2>Post</h2>
+
+
+
+    @foreach(var Post in Posts){
+        <BlazorBsky.Shared.PostComponent Value="@Post" />
+    }
+}
+@code {
+    [Parameter]
+    public string? userid { get; set; }
+
+    FeedProfile? UserProfile;
+    IEnumerable<PostView>? Posts;
+
+    string? msg;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var author = userid == null ? null : ATIdentifier.Create(userid);
+        if (author == null)
+        {
+            msg = "No or invaled user handle";
+            return;
+        }
+        try
+        {
+            msg = "Loading...";
+
+            var reqPosts = AppData.Client.Feed.GetAuthorFeedAsync(author, limit: 30);
+            var reqProfile = AppData.Client.Actor.GetProfileAsync(author);
+
+            var profile = await reqProfile;
+            var posts = await reqPosts;
+            if (!profile.IsT0)
+            {
+                if (profile.IsT1) msg = "Error: " + posts.AsT1.Detail?.Message;
+                return;
+            }
+            if (!posts.IsT0)
+            {
+                if (posts.IsT1) msg = "Error: " + posts.AsT1.Detail?.Message;
+                return;
+            }
+            Posts = posts.AsT0.Feed.Select(
+                post => post.Post
+            );
+            UserProfile = profile.AsT0;
+
+        }
+        catch (Exception e)
+        {
+            //Logger.Error
+            msg = "Exception: " + e.ToString();
+        }
+    }
+
+
+    static List<IEnumerable<PostView>> Flatten(ThreadView thread)
+    {
+        var L1Replies = thread.Replies?.OrderBy(r => r.Post!.LikeCount).AsEnumerable() ?? [];
+
+        return L1Replies.Select(
+            L1Reply =>
+            IterateBy(L1Reply, t => t.Replies?.MaxBy(r => r.Post!.LikeCount))
+            .Select(t => t.Post!)
+        ).ToList();
+    }
+
+    static IEnumerable<T> IterateBy<T>(T First, Func<T, T?> Next)
+    {
+        T? current = First;
+        while (current != null)
+        {
+            yield return current;
+            current = Next(current);
+        }
+    }
+
+    /*
+    void HandleDelete()
+        {
+        //AppData.DeletePost(post!);
+        Navigation.NavigateTo("/");
+    }
+    */
+}
