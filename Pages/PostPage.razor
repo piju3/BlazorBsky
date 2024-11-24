@@ -24,7 +24,7 @@ else
     </div>
 }
 @code{
-    //https://bsky.app/profile/bsky.app/post/3l3jewuiszf2l  -> at://bsky.app/app.bsky.feed.post/3l3jewuiszf2l -> at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l3jewuiszf2l
+    // To do: accept /profile/{handle}/post/{id}, translate to "at://{handle}/app.bsky.feed.post/{id}"
 
     [Parameter]
     public string? AtUri { get; set; }

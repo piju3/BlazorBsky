@@ -2,35 +2,52 @@
 @using System.Runtime.InteropServices.JavaScript
 @using Microsoft.AspNetCore.Components.Web
 @using BlazorBsky.Data
+@inject NavigationManager Nav
 <PageTitle>Home</PageTitle>
 <div id="main" style="width: 1100px; margin:auto">
-    <h1 class="">Hello, world!</h1>
-    Welcome to X: the everything app™ (except it's a terrible Bluesky client). Be warned CSS/web design is not currently part of the experience.
+    Welcome to BlazorBsky: the everything app™. Be warned CSS/web design is not currently part of the experience.
     <!--<form @onsubmit="Submit" style="height: 100%;">
-        <label>ATUrl or handle</label><input type="text" @bind="form1text" style="width:60%"></input> <input type="submit" />
+    <label>ATUrl or handle</label><input type="text" @bind="form1text" style="width:60%"></input> <input type="submit" />
     </form>
     -->
-    <div><a href="/post/at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l6oveex3ii2l">View post</a></div>
-    <div><a href="/profile/bsky.app">View profile</a></div>
-    <!--PostTimeline Posts=@(...) /-->
+    <div><a href="/?post/at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l6oveex3ii2l">View post</a></div>
+    <div><a href="/?profile/bsky.app">View profile</a></div>
+
+    @if(Posts != null) {
+        <PostTimeline Posts="Posts"></PostTimeline>
+    }
 </div>
 @code{
-    string form1text = "";
-    Task Submit()
+    protected override async Task OnParametersSetAsync()
     {
-        //if(){}
-        return Task.CompletedTask;
+        //Due to https://github.com/dotnet/aspnetcore/issues/45279 you can't navigate to a page that has "." in the URL in development, and that is in every single user handle
+        //As a workaround instead of /profile/bsky.app you can go to /?profile/bsky.app
+
+        var query = new Uri(Nav.Uri).Query;
+        if (query.Length > 0){
+            Nav.NavigateTo(query.Substring(1));
+            return;
+        }
+
+
+        var feed = await AppData.Client.Feed.GetFeedAsync(new ATUri("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot")); //default bsky.app feed
+        if (feed.IsT0) Posts = [feed.AsT0.Feed.Select(fvp => fvp.Post)];
     }
 
+    List<IEnumerable<PostView>>? Posts;
+
+
+    [Parameter]
+    public string? PageRoute { get; set; }
+
     /*To Do list:
-    * - Git
-    * - FishyFlip PR
-    *   - Switch to dev
-    * - Fix navigation
-    * - Fix home page somehow
-    * - Support images
+    * - Avatars
+    * - Post images
     * - Clean up details
-    * - Host on GitHub pages
-    * - OAuth...
+    * - GitHub Pages?
+    *   https://blog.elmah.io/blazor-wasm-404-error-and-fix-for-github-pages/
+    *   https://github.com/rafgraph/spa-github-pages
+    * - OAuth
+    *   https://drasticactions.github.io/FishyFlip/docs/logging-in.html
     */
 }

@@ -1,6 +1,7 @@
 ﻿<RadzenCard style="@(Indent>0?"margin-left: "+Indent+"em" : null)">
     <!--class="rz-my-12 rz-mx-auto" Style="min-height:10em"-->
-    <a href="/Profile/@Value.Author.Handle">@Value.Author.Handle (@Value.IndexedAt):</a> <a href="/post/@Uri.EscapeDataString(Value.Uri.Href)"><RadzenIcon Icon="link" /></a>
+    @* Remove /?s *@
+    <a href="/?Profile/@Value.Author.Handle">👤 @Value.Author.Handle</a> (@Value.IndexedAt): <a href="/?post/@Uri.EscapeDataString(Value.Uri.Href)"><RadzenIcon Icon="link" title="permalink" /></a> <a href="@GetBskyUrl()">(view on bsky)</a> 
     <div style="/*min-height:3em*/">@(Value.Record!.Text)</div>
     <div style="display:flex" class="post-controls">
         @*if(!ConfirmDelete){
@@ -27,6 +28,8 @@
 
     [Parameter]
     public required PostView Value { get; set; }
+    string GetBskyUrl() => $"https://bsky.app/profile/{Value.Author.Handle}/post/{Value.Uri.Rkey}";
+    
     /*
     [Parameter]
     public EventCallback<Post> OnDelete { get; set; }
