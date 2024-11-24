@@ -1,8 +1,29 @@
 ﻿<RadzenCard style="@(Indent>0?"margin-left: "+Indent+"em" : null)">
     <!--class="rz-my-12 rz-mx-auto" Style="min-height:10em"-->
-    @* Remove /?s *@
-    <a href="/?Profile/@Value.Author.Handle">👤 @Value.Author.Handle</a> (@Value.IndexedAt): <a href="/?post/@Uri.EscapeDataString(Value.Uri.Href)"><RadzenIcon Icon="link" title="permalink" /></a> <a href="@GetBskyUrl()">(view on bsky)</a> 
+    <img src="@Value.Author.Avatar" style="max-width:50px"/>
+    <a href="/Profile/@Value.Author.Handle">@@@Value.Author.Handle</a> <a href="/post/@Uri.EscapeDataString(Value.Uri.Href)">(@Value.IndexedAt): <RadzenIcon Icon="link" title="permalink" /></a> <a href="@GetBskyUrl()">(view on bsky)</a>
     <div style="/*min-height:3em*/">@(Value.Record!.Text)</div>
+    @if(Value.Embed != null){
+        <div>
+        @if (Value.Embed is ImagesEmbed imgs)
+        {
+            @foreach (var img in imgs.Images!)
+            {
+                <img src=@($"https://cdn.bsky.app/img/feed_thumbnail/plain/{Value.Author.Did.ToString()}/{img.Image?.Ref?.Link}") style="max-width:200px"/>
+            }
+        }
+        else if (Value.Embed is ImageViewEmbed img2)
+        {
+            @foreach (var img in img2.Images)
+            {
+                <a href="@img.Fullsize"><img src="@img.Thumb" style="max-width:200px"/></a>
+            }
+        }
+        else {
+            <text>(Embed: @Value.Embed.Type)</text>
+        }
+        </div>
+    }
     <div style="display:flex" class="post-controls">
         @*if(!ConfirmDelete){
             <RadzenButton style="margin-right:5px" Icon="delete" Click="()=> ConfirmDelete = true">Delete</RadzenButton>
@@ -18,6 +39,8 @@
     {
         <PostForm IsReplyTo="@Value"/>
     }
+
+
 </RadzenCard>
 @code {
     bool ShowReplyForm = false;

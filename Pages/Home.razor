@@ -5,46 +5,35 @@
 @inject NavigationManager Nav
 <PageTitle>Home</PageTitle>
 <div id="main" style="width: 1100px; margin:auto">
-    Welcome to BlazorBsky: the everything app™. Be warned CSS/web design is not currently part of the experience.
-    <!--<form @onsubmit="Submit" style="height: 100%;">
-    <label>ATUrl or handle</label><input type="text" @bind="form1text" style="width:60%"></input> <input type="submit" />
-    </form>
-    -->
-    <div><a href="/?post/at%3A%2F%2Fbsky.app%2Fapp.bsky.feed.post%2F3l6oveex3ii2l">View post</a></div>
-    <div><a href="/?profile/bsky.app">View profile</a></div>
-
-    @if(Posts != null) {
-        <PostTimeline Posts="Posts"></PostTimeline>
+    Welcome to BlazorBsky: the everything app™<br/> Be warned CSS/web design is not currently part of the experience.
+    @foreach (var post in Posts ?? [])
+    {
+        <BlazorBsky.Shared.PostComponent Value=post @key=post />
     }
 </div>
 @code{
     protected override async Task OnParametersSetAsync()
     {
         //Due to https://github.com/dotnet/aspnetcore/issues/45279 you can't navigate to a page that has "." in the URL in development, and that is in every single user handle
-        //As a workaround instead of /profile/bsky.app you can go to /?profile/bsky.app
-
+        //As a workaround, when testing instead of /url, you can go to /?url
         var query = new Uri(Nav.Uri).Query;
         if (query.Length > 0){
             Nav.NavigateTo(query.Substring(1));
             return;
         }
 
-
         var feed = await AppData.Client.Feed.GetFeedAsync(new ATUri("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot")); //default bsky.app feed
-        if (feed.IsT0) Posts = [feed.AsT0.Feed.Select(fvp => fvp.Post)];
+        if (feed.IsT0) Posts = feed.AsT0.Feed.Select(fvp => fvp.Post);
     }
 
-    List<IEnumerable<PostView>>? Posts;
+    IEnumerable<PostView>? Posts;
 
 
     [Parameter]
     public string? PageRoute { get; set; }
 
     /*To Do list:
-    * - Avatars
-    * - Post images
-    * - Clean up details
-    * - GitHub Pages?
+    * - GitHub Pages
     *   https://blog.elmah.io/blazor-wasm-404-error-and-fix-for-github-pages/
     *   https://github.com/rafgraph/spa-github-pages
     * - OAuth
