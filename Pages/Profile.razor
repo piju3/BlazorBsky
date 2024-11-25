@@ -30,7 +30,7 @@ else
     [Parameter]
     public string? userid { get; set; }
 
-    FeedProfile? UserProfile;
+    ProfileViewDetailed? UserProfile;
     IEnumerable<PostView>? Posts;
 
     string? msg;
@@ -75,17 +75,6 @@ else
         }
     }
 
-
-    static List<IEnumerable<PostView>> Flatten(ThreadView thread)
-    {
-        var L1Replies = thread.Replies?.OrderBy(r => r.Post!.LikeCount).AsEnumerable() ?? [];
-
-        return L1Replies.Select(
-            L1Reply =>
-            IterateBy(L1Reply, t => t.Replies?.MaxBy(r => r.Post!.LikeCount))
-            .Select(t => t.Post!)
-        ).ToList();
-    }
 
     static IEnumerable<T> IterateBy<T>(T First, Func<T, T?> Next)
     {

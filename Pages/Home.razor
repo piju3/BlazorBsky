@@ -21,7 +21,7 @@
         }
 
         var feed = await AppData.Client.Feed.GetFeedAsync(new ATUri("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot")); //default bsky.app feed
-        if (feed.IsT0) Posts = feed.AsT0.Feed.Select(fvp => fvp.Post);
+        if (feed.IsT0) Posts = feed.AsT0?.Feed?.Select(fvp => fvp.Post).OfType<PostView>();
     }
 
     IEnumerable<PostView>? Posts;

@@ -46,11 +46,13 @@ else
 
             var data = await AppData.Client.Feed.GetPostThreadAsync(new ATUri(AtUri));
             if (!data.IsT0) {
-                if (data.IsT1) msg = "Error: " + data.AsT1.Detail?.Message;
+                msg = "Error: " + data.AsT1.Detail?.Message;
                 return;
             }
-            Post = data.AsT0.Thread.Post!;
-            Replies = Flatten(data.AsT0.Thread);
+
+            ThreadViewPost? thread = data.AsT0?.Thread as ThreadViewPost;
+            Post = thread?.Post;
+            Replies = Flatten(thread);
         } catch (Exception e)
         {
             //Logger.Error
@@ -59,13 +61,13 @@ else
     }
 
 
-    static List<IEnumerable<PostView>> Flatten(ThreadView thread)
+    static List<IEnumerable<PostView>> Flatten(ThreadViewPost? thread)
     {
-        var L1Replies = thread.Replies?.OrderBy(r => r.Post!.LikeCount).AsEnumerable() ?? [];
+        var L1Replies = (thread?.Replies?.OfType<ThreadViewPost>())?.OrderBy(r => r.Post!.LikeCount).AsEnumerable() ?? [];
 
         return L1Replies.Select(
             L1Reply =>
-            IterateBy(L1Reply, t => t.Replies?.MaxBy(r => r.Post!.LikeCount))
+            IterateBy(L1Reply, t => t.Replies?.OfType<ThreadViewPost>().MaxBy(r => r.Post!.LikeCount))
             .Select(t => t.Post!)
         ).ToList();
     }
