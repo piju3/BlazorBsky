@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy-to-github-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write 
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - uses: actions/checkout@v4.2.2
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4.1.0
+      with:
+        dotnet-version: 9.0.x # Adjust version as needed
+    - name: Install .NET WASM Build Tools
+      run: dotnet workload install wasm-tools
+    - name: Publish .NET Core Project
+      run: dotnet publish BlazorBsky.csproj -o Publish
+    - name: Change base-tag in index.html
+      run: sed -i 's|<base href="/" />|<base href="/BlazorBsky/" />|g' Publish/wwwroot/index.html
+    - name: Add .nojekyll file
+      run: touch Publish/wwwroot/.nojekyll
+    - name: Create 404.html
+      run: cp Publish/wwwroot/index.html Publish/wwwroot/404.html
+    - name: Upload static files as artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: Publish/wwwroot
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
+
