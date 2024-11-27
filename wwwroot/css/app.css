@@ -1,6 +1,10 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
+main {
+    max-width: 1000px;
+    margin: auto
+}
 
 h1:focus {
     outline: none;

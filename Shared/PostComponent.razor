@@ -2,19 +2,31 @@
 <RadzenCard style="@(Indent>0?"margin-left: "+Indent+"em" : null)">
     <!--class="rz-my-12 rz-mx-auto" Style="min-height:10em"-->
     <img src="@Value.Author.Avatar" style="max-width:50px"/>
-    <a href="Profile/@Value.Author.Handle">@@@Value.Author.Handle</a> <a href="post/@Uri.EscapeDataString(Value.Uri.Href)">(@Value.IndexedAt): <RadzenIcon Icon="link" title="permalink" /></a> <a href="@GetBskyUrl()">(view on bsky)</a>
+    <a href="profile/@Value.Author.Handle">@@@Value.Author.Handle</a> <a href="profile/@Uri.EscapeDataString(Value.Author.Handle?.ToString() ?? Value.Author.Did.ToString())/post/@Value.Uri.Rkey">(@Value.IndexedAt): <RadzenIcon Icon="link" title="permalink" /></a> <a href="@GetBskyUrl()">(view on bsky)</a>
     <div style="/*min-height:3em*/">@((Value.Record as Post)?.Text)</div>
     @if(Value.Embed != null){
+        //Embed
         <div>
-        @if (Value.Embed is ViewImages imgs)
-        {
-            @foreach (var img in imgs.Images ?? [])
+            @if (Value.Embed is ViewImages imgs)
             {
-                <a href="@img.Fullsize"><img src="@img.Thumb" style="max-width:200px"/></a>
+                foreach (var img in imgs.Images ?? [])
+                {
+                    <a href="@img.Fullsize"><img src="@img.Thumb" style="max-width:400px"/></a>
+                }
             }
+            else if (Value.Embed is ViewExternal ext1){
+                var ext = ext1.External!;
+                <a href="@ext.Uri">
+                    <p>@ext.Title</p>
+                    <img src="@ext.Thumb" style="max-width:400px" />
+                </a>
+                <p><q>@ext.Description</q></p>
         }
-        else {
+        else{
             <text>(Embed: @Value.Embed.Type)</text>
+        //ViewVideo
+        //ViewRecordDef
+        //ViewRecordWithMedia
         }
         </div>
     }

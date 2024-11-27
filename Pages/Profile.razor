@@ -16,7 +16,7 @@ else
         <img src="@UserProfile!.Avatar" width="50" />
         <div>@UserProfile.DisplayName</div>
         <div>@UserProfile.Description</div>
-        <span>@UserProfile.FollowersCount Followers, @UserProfile.FollowsCount Follows, @UserProfile.PostsCount Posts</span>
+        <span>@UserProfile.FollowersCount Followers, @UserProfile.FollowsCount Follows, @UserProfile.PostsCount Posts  <a href="@GetBskyUrl()">(view on bsky)</a></span>
     </RadzenCard>
     <h2>Post</h2>
 
@@ -35,6 +35,7 @@ else
 
     string? msg;
 
+    string GetBskyUrl() => $"https://bsky.app/profile/{userid}";
     protected override async Task OnParametersSetAsync()
     {
         var author = userid == null ? null : ATIdentifier.Create(userid);

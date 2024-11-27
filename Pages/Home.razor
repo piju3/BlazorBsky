@@ -1,9 +1,8 @@
 ﻿@page "/"
 @using BlazorBsky.Data
 @inject NavigationManager Nav
-<PageTitle>Home</PageTitle>
-<div id="main" style="width: 1100px; margin:auto">
-    Welcome to BlazorBsky: the everything app™<br/> Be warned CSS/web design is not currently part of the experience.
+<PageTitle>Welcome to BlazorBsky: the everything app™</PageTitle>
+<div id="main">
     @foreach (var post in Posts ?? [])
     {
         <BlazorBsky.Shared.PostComponent Value=post @key=post />
@@ -31,10 +30,6 @@
     public string? PageRoute { get; set; }
 
     /*To Do list:
-    * - GitHub Pages
-    *   https://blog.elmah.io/blazor-wasm-404-error-and-fix-for-github-pages/
-    *   https://github.com/rafgraph/spa-github-pages
-    * - Match BSky.app URL format
     * - OAuth
     *   https://drasticactions.github.io/FishyFlip/docs/logging-in.html
     */
