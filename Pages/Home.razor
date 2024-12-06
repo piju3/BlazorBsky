@@ -1,11 +1,11 @@
 ﻿@page "/"
-@using BlazorBsky.Data
+@using BlazorSky.Data
 @inject NavigationManager Nav
-<PageTitle>Welcome to BlazorBsky: the everything app™</PageTitle>
+<PageTitle>Welcome to BlazorSky: the everything app™</PageTitle>
 <div id="main">
     @foreach (var post in Posts ?? [])
     {
-        <BlazorBsky.Shared.PostComponent Value=post @key=post />
+        <BlazorSky.Shared.PostComponent Value=post @key=post />
     }
 </div>
 @code{
@@ -19,7 +19,11 @@
             return;
         }
 
-        var feed = await AppData.Client.Feed.GetFeedAsync(new ATUri("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot")); //default bsky.app feed
+        //Default bsky.app feed:
+        //var feedUrl = new ATUri("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot");
+        //News:
+        var feedUrl = new ATUri("at://did:plc:kkf4naxqmweop7dv4l2iqqf5/app.bsky.feed.generator/verified-news");
+        var feed = await AppData.Client.Feed.GetFeedAsync(feedUrl);
         if (feed.IsT0) Posts = feed.AsT0?.Feed?.Select(fvp => fvp.Post).OfType<PostView>();
     }
 

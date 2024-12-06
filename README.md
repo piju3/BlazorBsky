@@ -1,5 +1,5 @@
-This is a BlueSky client made with Blazor WebAssembly and [FishyFlip](https://drasticactions.github.io/FishyFlip).
+This is an extremely basic BlueSky client made with Blazor WebAssembly and [FishyFlip](https://drasticactions.github.io/FishyFlip).
 
-Keep in mind the focus for now is on functionality only and not design.
+It implements feeds, posts, and profile view (anonymous access only). Please keep in mind the HTML/CSS has been deliberately kept as simple as possible.
 
-Not implemented: login, interaction, non-image embeds.
+Live demo at https://piju3.github.io/BlazorSky/

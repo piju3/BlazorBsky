@@ -1,6 +1,6 @@
 ﻿using FishyFlip;
 
-namespace BlazorBsky.Data
+namespace BlazorSky.Data
 {
     public static class AppData
     {

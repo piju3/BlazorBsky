@@ -1,5 +1,5 @@
 ﻿@page "/profile/{userid}"
-@using BlazorBsky.Data
+@using BlazorSky.Data
 @using FishyFlip.Models
 @using System.Text
 
@@ -23,7 +23,7 @@ else
 
 
     @foreach(var Post in Posts){
-        <BlazorBsky.Shared.PostComponent Value="@Post" />
+        <BlazorSky.Shared.PostComponent Value="@Post" />
     }
 }
 @code {

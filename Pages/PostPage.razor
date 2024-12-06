@@ -1,6 +1,6 @@
 ﻿@page "/post/{AtUri}"
 @page "/profile/{Handle}/post/{PostId}";
-@using BlazorBsky.Data
+@using BlazorSky.Data
 @using FishyFlip.Models
 @using System.Text
 @inject NavigationManager Navigation
@@ -11,7 +11,7 @@
 }
 else
 {
-    <BlazorBsky.Shared.PostComponent Value="@Post"/>
+    <BlazorSky.Shared.PostComponent Value="@Post"/>
     <hr />
     <div style="margin-left:1em">
         @if (Replies!.Count == 0)

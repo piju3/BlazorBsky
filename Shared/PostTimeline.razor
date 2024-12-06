@@ -3,7 +3,7 @@
 {
     int indent = 0;
     foreach (var post in postSet){
-        <BlazorBsky.Shared.PostComponent Value=post Indent="@indent" @key=post />
+        <BlazorSky.Shared.PostComponent Value=post Indent="@indent" @key=post />
         if (indent == 0) indent++;
     }
     <!--<hr/>-->

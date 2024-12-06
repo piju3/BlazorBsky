@@ -1,4 +1,4 @@
-using BlazorBsky;
+using BlazorSky;
 using FishyFlip;
 using FishyFlip.Models;
 using Microsoft.AspNetCore.Components;
